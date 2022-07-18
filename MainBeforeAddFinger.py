@@ -7,9 +7,6 @@ import time
 from hal import hal_keypad as keypad
 from hal import hal_lcd as LCD
 from hal import hal_buzzer as buzzer
-from hal import hal_rfid_reader as rfid
-from hal import hal_servo as servo
-
 from picamera import PiCamera
 
 from threading import Thread
@@ -92,14 +89,6 @@ def takeapicfunction():
     lcd.lcd_display_string("the bell", 2)
 
 
-def unlockdoorfunction():
-    servo.set_servo_position(0)
-    print("unlocked!")
-    time.sleep(7)
-    servo.set_servo_position(100)
-    time.sleep(2)
-
-
 def whilefunction():
     while(True):
         time.sleep(0.2)
@@ -113,24 +102,22 @@ def whilefunction():
             time.sleep(5)
 
 def checknfc():
-    code = 797654762017
-    while (True):
-        id, text = rfid.SimpleMFRC522().read()
-        print(id)
-        print(text)
-        time.sleep(1)
-        if (id == code):
-            unlockdoorfunction()
-
+    while(True):
+        time.sleep(0.2)
+        keypress = keypad.get_key()
+        if keypress:
+            lcd = LCD.lcd()
+            lcd.lcd_clear()
+            lcd.lcd_display_string("Please wait...", 1)
+            buzzer.short_beep(2)
+            takeapicfunction()
+            time.sleep(5)
 
 def main():
     thread1 = Thread(target = whilefunction)
-    thread2 = Thread(target = checknfc)
 
     keypad.init()
     buzzer.init()
-    rfid.init()
-    servo.init()
 
     lcd = LCD.lcd()
     lcd.lcd_clear()
@@ -139,7 +126,6 @@ def main():
     lcd.lcd_display_string("the bell", 2)
 
     thread1.start()
-    thread2.start()
 
 if __name__ == '__main__':
     main()

@@ -17,5 +17,5 @@ def set_servo_position(position):
     print("position = " + str(position))
 
     PWM.start(position)
-    sleep(0.05)
+    sleep(3)
 
