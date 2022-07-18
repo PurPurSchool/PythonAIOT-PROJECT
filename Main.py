@@ -7,7 +7,7 @@ import time
 from hal import hal_keypad as keypad
 from hal import hal_lcd as LCD
 from hal import hal_buzzer as buzzer
-from picamera import PiCamera
+from picamera import PiCamera as camera
 
 from threading import Thread
 
@@ -72,24 +72,28 @@ def sendPicture():
 
 
 def takeapicfunction():
+    filedirectory = os.getcwd() + "/image.png"
+    print(filedirectory)
     camera.start_preview()
     time.sleep(3)
-    camera.capture(os.getcwd())
+    camera.capture(filedirectory)
     camera.stop_preview()
+    time.sleep(2)
+    sendPicture()
 
 
-def mainwhilefunction():
+def whilefunction():
     while(True):
         time.sleep(0.2)
         keypress = keypad.get_key()
         if keypress:
-            buzzer.short_beep(2)
+            #buzzer.short_beep(2)
             takeapicfunction()
             time.sleep(5)
 
 
 def main():
-    thread1 = Thread(target = mainwhilefunction)
+    thread1 = Thread(target = whilefunction)
 
     keypad.init()
     buzzer.init()
@@ -100,6 +104,10 @@ def main():
     lcd.lcd_display_string("Project", 1)
     lcd.lcd_display_string("Door thingy", 2)
 
-    sendPicture()
-
     thread1.start()
+    while(True):
+        print("test")
+        time.sleep(2)
+
+if __name__ == '__main__':
+    main()
