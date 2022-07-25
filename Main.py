@@ -19,6 +19,40 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 
 
+def opendoorifreplytrue(reply):
+    if (reply == True):
+        lcd = LCD.lcd()
+        lcd.lcd_clear()
+
+        lcd.lcd_display_string("The will now open...", 1)
+        servo.set_servo_position(100)
+        time.sleep(10)
+
+        lcd.lcd_clear()
+        lcd.lcd_display_string("The door is now closed.", 1)
+
+        servo.set_servo_position(0)
+
+
+def checkforreply(service, message):
+    elapsed_time = 0
+    test = 0
+
+    while(test != 2 and elapsed_time < 20):
+        threads = service.users().threads().get(userId='me', id=message['id']).execute()
+        test = len(threads['messages'])
+        time.sleep(1)
+        elapsed_time = elapsed_time + 1
+        print(elapsed_time)
+
+    if(test == 2):
+        print("TRUE")
+        return True
+    else:
+        print("FALSE")
+        return False
+
+
 def sendPicture():
     # Get the path to the pickle file
     home_dir = os.path.expanduser('~')
@@ -73,8 +107,11 @@ def sendPicture():
             userId="me", body=message1).execute())
     print('Message Id: %s' % message['id'])
 
+    reply = checkforreply(service, message)
+    opendoorifreplytrue(reply)
 
-def takeapicfunction():
+
+def takeapicfunctioncamera():
     filedirectory = os.getcwd() + "/image.png"
     print(filedirectory)
 
@@ -92,12 +129,12 @@ def takeapicfunction():
     lcd.lcd_display_string("the bell", 2)
 
 
-def unlockdoorfunction():
-    servo.set_servo_position(0)
-    print("unlocked!")
-    time.sleep(7)
-    servo.set_servo_position(100)
+def takeapicfunction():
     time.sleep(2)
+    sendPicture()
+    lcd = LCD.lcd()
+    lcd.lcd_display_string("Please ring", 1)
+    lcd.lcd_display_string("the bell", 2)
 
 
 def whilefunction():
@@ -108,19 +145,19 @@ def whilefunction():
             lcd = LCD.lcd()
             lcd.lcd_clear()
             lcd.lcd_display_string("Please wait...", 1)
-            buzzer.short_beep(2)
+            #buzzer.short_beep(2)
             takeapicfunction()
             time.sleep(5)
 
 def checknfc():
-    code = 797654762017
+    code = 246239183187
     while (True):
         id, text = rfid.SimpleMFRC522().read()
         print(id)
         print(text)
         time.sleep(1)
         if (id == code):
-            unlockdoorfunction()
+            opendoorifreplytrue(True)
 
 
 def main():
