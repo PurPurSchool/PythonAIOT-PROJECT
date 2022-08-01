@@ -24,12 +24,14 @@ def opendoorifreplytrue(reply):
         lcd = LCD.lcd()
         lcd.lcd_clear()
 
-        lcd.lcd_display_string("The will now open...", 1)
+        lcd.lcd_display_string("The door will", 1)
+        lcd.lcd_display_string("now open...", 2)
         servo.set_servo_position(100)
         time.sleep(10)
 
         lcd.lcd_clear()
-        lcd.lcd_display_string("The door is now closed.", 1)
+        lcd.lcd_display_string("The door will", 1)
+        lcd.lcd_display_string("now close...", 2)
 
         servo.set_servo_position(0)
 
@@ -146,11 +148,13 @@ def whilefunction():
             lcd.lcd_clear()
             lcd.lcd_display_string("Please wait...", 1)
             #buzzer.short_beep(2)
-            takeapicfunction()
+            takeapicfunctioncamera()
             time.sleep(5)
 
+
 def checknfc():
-    code = 246239183187
+    code = 384231916268
+    lcd = LCD.lcd()
     while (True):
         id, text = rfid.SimpleMFRC522().read()
         print(id)
@@ -158,6 +162,8 @@ def checknfc():
         time.sleep(1)
         if (id == code):
             opendoorifreplytrue(True)
+            lcd.lcd_clear()
+            lcd.lcd_display_string("Please wait...", 1)
 
 
 def main():
@@ -172,11 +178,12 @@ def main():
     lcd = LCD.lcd()
     lcd.lcd_clear()
 
+    thread1.start()
+    thread2.start()
+
     lcd.lcd_display_string("Please ring", 1)
     lcd.lcd_display_string("the bell", 2)
 
-    thread1.start()
-    thread2.start()
 
 if __name__ == '__main__':
     main()
