@@ -29,7 +29,8 @@ def readRFID_sendtoPICKLE():
     with open(pickle_path, 'rb') as read_ids:
         current_ids = pickle.load(read_ids)
 
-    print("CURRENT IDS ARE: " + current_ids)
+    print("CURRENT IDS ARE: ")
+    print(current_ids)
 
 
 def main():
