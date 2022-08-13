@@ -9,6 +9,7 @@ from hal import hal_lcd as LCD
 from hal import hal_buzzer as buzzer
 from hal import hal_rfid_reader as rfid
 from hal import hal_servo as servo
+from hal import hal_temp_humidity_sensor as am2302
 
 from picamera import PiCamera
 
@@ -180,9 +181,24 @@ def RFID_Check():
                 lcd.lcd_display_string("ERROR: Please try again.", 1)
 
 
+def am2302_function():
+    baseURL = "https://api.thingspeak.com/update?api_key=BDRAZ05CKFHY6QUU&field1=0"
+    http = urllib3.PoolManager()
+
+    while (True):
+        result = am2302.read_temp_humidity()
+        Temperature = result[0]
+        Humidity = result[1]
+
+        response = http.request("GET", baseURL + temp + "," + humidity)
+
+        time.sleep(20)
+        
+
 def main():
     thread1 = Thread(target = doorbell_Check)
     thread2 = Thread(target = RFID_Check)
+    thread3 = Thread(target = am2302_function)
 
     keypad.init()
     buzzer.init()
@@ -194,6 +210,7 @@ def main():
 
     thread1.start()
     thread2.start()
+    thread3.start()
 
     lcd.lcd_display_string("Please ring", 1)
     lcd.lcd_display_string("the bell", 2)
