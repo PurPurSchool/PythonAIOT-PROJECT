@@ -196,22 +196,26 @@ def am2302_function():
         
 
 def main():
+    #Thread declaration
     thread1 = Thread(target = doorbell_Check)
     thread2 = Thread(target = RFID_Check)
     thread3 = Thread(target = am2302_function)
 
+    #HAL drivers initialization
     keypad.init()
     buzzer.init()
     rfid.init()
     servo.init()
+    am2302.init()
 
-    lcd = LCD.lcd()
-    lcd.lcd_clear()
-
+    #Start the threads
     thread1.start()
     thread2.start()
     thread3.start()
 
+    #LCD screen initialization
+    lcd = LCD.lcd()
+    lcd.lcd_clear()
     lcd.lcd_display_string("Please ring", 1)
     lcd.lcd_display_string("the bell", 2)
 
