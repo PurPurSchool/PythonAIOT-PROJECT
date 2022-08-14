@@ -184,13 +184,19 @@ def RFID_Check():
 def am2302_function():
     baseURL = "https://api.thingspeak.com/update?api_key=BDRAZ05CKFHY6QUU&field1=0"
     http = urllib3.PoolManager()
+    
+    previousTemp = 0
 
     while (True):
         result = am2302.read_temp_humidity()
-        Temperature = result[0]
-        Humidity = result[1]
-
-        response = http.request("GET", baseURL + temp + "," + humidity)
+        temp = result[0]
+        humidity = result[1]
+        
+        if (temp == 0):
+            response = http.request("GET", baseURL + previousTemp + "," + humidity)
+        else:
+            response = http.request("GET", baseURL + temp + "," + humidity)
+            previousTemp = temp
 
         time.sleep(20)
         
