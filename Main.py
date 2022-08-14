@@ -129,7 +129,6 @@ def takeapicfunction():
     time.sleep(0.5)
     sendPicture()
     
-    
     lcd = LCD.lcd()
     lcd.lcd_clear()
     lcd.lcd_display_string("Please ring", 1)
