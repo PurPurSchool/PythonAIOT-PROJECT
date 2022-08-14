@@ -3,6 +3,8 @@ import os
 import base64
 import googleapiclient.discovery
 import time
+import requests
+import urllib3
 
 from hal import hal_keypad as keypad
 from hal import hal_lcd as LCD
@@ -23,8 +25,8 @@ from email.mime.image import MIMEImage
 def opendoorifreplytrue(reply):
     if (reply == True):
         lcd = LCD.lcd()
+        
         lcd.lcd_clear()
-
         lcd.lcd_display_string("The door will", 1)
         lcd.lcd_display_string("now open...", 2)
         servo.set_servo_position(100)
@@ -115,19 +117,21 @@ def sendPicture():
 
 
 def takeapicfunction():
-    filedirectory = os.getcwd() + "/image.png"
-    print(filedirectory)
+    picDirectory = os.getcwd() + "/image.png"
+    print(picDirectory)
 
     camera = PiCamera()
-    time.sleep(1)
     camera.start_preview()
-    time.sleep(3)
-    camera.capture(filedirectory)
+    time.sleep(2)
+    camera.capture(picDirectory)
     camera.stop_preview()
     camera.close()
-    time.sleep(2)
+    time.sleep(0.5)
     sendPicture()
+    
+    
     lcd = LCD.lcd()
+    lcd.lcd_clear()
     lcd.lcd_display_string("Please ring", 1)
     lcd.lcd_display_string("the bell", 2)
 
