@@ -3,7 +3,6 @@ import os
 import base64
 import googleapiclient.discovery
 import time
-import requests
 import urllib3
 
 from hal import hal_keypad as keypad
@@ -188,17 +187,20 @@ def am2302_function():
     baseURL = "https://api.thingspeak.com/update?api_key=BDRAZ05CKFHY6QUU&field1=0"
     http = urllib3.PoolManager()
     
-    previousTemp = 0
+    previousTemp = str(0)
 
     while (True):
         result = am2302.read_temp_humidity()
         temp = result[0]
         humidity = result[1]
         
+        temp = str(temp)
+        humidity = str(humidity)
+        
         if (temp == 0):
-            response = http.request("GET", baseURL + previousTemp + "," + humidity)
+            response = http.request("POST", baseURL + previousTemp + "," + humidity)
         else:
-            response = http.request("GET", baseURL + temp + "," + humidity)
+            response = http.request("POST", baseURL + temp + "," + humidity)
             previousTemp = temp
 
         time.sleep(20)
